@@ -68,5 +68,5 @@ void main(void) {
 #endif
 
   // Enter LPM0, interrupts enabled
-  __bis_SR_register(LPM0_bits | GIE);
+  __bis_SR_register(LPM1_bits | GIE);
 }

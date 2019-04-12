@@ -29,15 +29,10 @@ static char lora_tx_buffer[MAX_BUFFER];
 // The baud rate values were calculated at:
 // http://software-dl.ti.com/msp430/msp430_public_sw/mcu/msp430/MSP430BaudRateConverter/index.html
 void init_uart() {
+#ifdef DEBUG
   // Configure USCI_A0 for UART mode
   UCA0CTLW0 = UCSWRST;          // enable software reset
   UCA0CTLW0 |= UCSSEL__SMCLK;   // CLK = SMCLK
-
-#ifdef S76SXB
-  // Configure USCI_A3 for UART mode
-  UCA3CTLW0 = UCSWRST;          // enable software reset
-  UCA3CTLW0 |= UCSSEL__SMCLK;   // CLK = SMCLK
-#endif
 
   // Baud Rate calculation
   // 8000000/(16*9600) = 52.083
@@ -47,7 +42,16 @@ void init_uart() {
   UCA0BR1 = 0x00;
   UCA0MCTLW |= UCOS16 | UCBRF_1 | 0x4900;
 
+  UCA0CTLW0 &= ~UCSWRST;        // Initialize eUSCI, disable software reset
+  UCA0IE |= UCRXIE;             // Enable USCI_A0 RX interrupt
+  UCA0IE |= UCTXIE;             // Enable USCI_A0 TX interrupt
+#endif
+
 #ifdef S76SXB
+  // Configure USCI_A3 for UART mode
+  UCA3CTLW0 = UCSWRST;          // enable software reset
+  UCA3CTLW0 |= UCSSEL__SMCLK;   // CLK = SMCLK
+
   // Baud Rate calculation
   // 8000000/(16*115200) = 4.340
   // Fractional portion = 0.340
@@ -55,13 +59,7 @@ void init_uart() {
   UCA3BR0 = 4;                 // 8000000/16/115200
   UCA3BR1 = 0x00;
   UCA3MCTLW |= UCOS16 | UCBRF_5 | 0x5500;
-#endif
 
-  UCA0CTLW0 &= ~UCSWRST;        // Initialize eUSCI, disable software reset
-  UCA0IE |= UCRXIE;             // Enable USCI_A0 RX interrupt
-  UCA0IE |= UCTXIE;             // Enable USCI_A0 TX interrupt
-
-#ifdef S76SXB
   UCA3CTLW0 &= ~UCSWRST;        // Initialize eUSCI, disable software reset
   UCA3IE |= UCRXIE;             // Enable USCI_A3 RX interrupt
   UCA3IE |= UCTXIE;             // Enable USCI_A3 TX interrupt
