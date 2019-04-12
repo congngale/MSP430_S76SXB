@@ -42,7 +42,6 @@ void main(void) {
   //init uart
   init_uart();
 
-
 #ifdef DEBUG
   //init message
   message = "Initialize back channel UART success!";
@@ -68,6 +67,6 @@ void main(void) {
   s76sxb_write(message, strlen(message));
 #endif
 
-  __bis_SR_register(LPM3_bits | GIE);    // Enter LPM3, interrupts enabled
-  __no_operation();                      // For debugger
+  // Enter LPM0, interrupts enabled
+  __bis_SR_register(LPM0_bits | GIE);
 }

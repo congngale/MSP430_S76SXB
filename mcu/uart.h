@@ -14,7 +14,6 @@
 #define ASCII_ENTER       0x0D
 #define ASCII_LINEFEED    0x0A
 
-#define MAX_QUEUE         5
 #define MAX_BUFFER        512
 
 //***** Function Prototypes ***************************************************

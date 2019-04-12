@@ -185,12 +185,6 @@ __interrupt void uart_0_isr(void)
             __no_operation();
             break;
     }
-
-    // Exit low-power mode:
-    //   Now that we either have received a byte - or are ready to transmit
-    //   a another byte - we need to wake up the CPU (since our read/write
-    //   routines enter LPM while waiting for the UART to do its thing)
-    _low_power_mode_off_on_exit();
 }
 #endif
 
@@ -248,11 +242,5 @@ __interrupt void uart_3_isr(void)
           __no_operation();
           break;
   }
-
-  // Exit low-power mode:
-  //   Now that we either have received a byte - or are ready to transmit
-  //   a another byte - we need to wake up the CPU (since our read/write
-  //   routines enter LPM while waiting for the UART to do its thing)
-  _low_power_mode_off_on_exit();
 }
 #endif

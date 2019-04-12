@@ -16,6 +16,7 @@
 // Initialize GPIO
 //*****************************************************************************
 void init_gpio() {
+#ifdef DEBUG
   //set LED1 - Red LED
   P1DIR |= BIT0;    //conf LED at P1.0 for debugging
   P1OUT &= ~BIT0;    //LED P1.0 switched off at startup
@@ -24,7 +25,6 @@ void init_gpio() {
   P1DIR |= BIT1;    //conf LED at P1.1 for debugging
   P1OUT &= ~BIT1;    //LED P1.1 switched off at startup
 
-#ifdef DEBUG
   // Set P2.0 and P2.1 for USCI_A0 UART operation
   P2SEL1 |= BIT0 | BIT1;
   P2SEL0 &= ~(BIT0 | BIT1);
