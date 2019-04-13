@@ -146,6 +146,15 @@ __interrupt void uart_0_isr(void)
 
         // UART receive interrupt
         case USCI_UART_UCRXIFG:
+#ifdef DEBUG
+            if (UCA0RXBUF == 'a') {
+              //write to s76sxb
+              s76sxb_write("sip get_ver", 11);
+            } else if (UCA0RXBUF == 'b') {
+              //write to s76sxb
+              s76sxb_write("mac tx ucnf 15 1234", 19);
+            }
+#endif
             __no_operation();
             break;
 
@@ -210,6 +219,7 @@ __interrupt void uart_3_isr(void)
             lora_rx_data_len = 0;
 #else
             //notify data received
+            __no_operation();
 #endif
           } else {
             //get buffer
