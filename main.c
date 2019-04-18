@@ -21,9 +21,10 @@
 #include "i2c.h"
 #include "gpio.h"
 #include "uart.h"
+#include "timer.h"
 #include "clocks.h"
-#include <msp430.h>
 #include <string.h>
+#include <msp430fr5994.h>
 
 void main(void) {
 #if defined(DEBUG) || defined(S76SXB)
@@ -46,6 +47,15 @@ void main(void) {
   //init i2c
   init_i2c();
 
+  //init timer
+  init_timer(10);
+
+  //need delay to make sensor available
+  __delay_cycles(1000000);     // SW Delay
+
+  //init hm3301 sensor
+  init_hm3301_sensor();
+
 #ifdef DEBUG
   //init message
   message = "Initialize UARTs success!";
@@ -63,10 +73,8 @@ void main(void) {
 #ifdef DEBUG
 //  message = "sip get_ver";
 //  s76sxb_write(message, strlen(message));
-
-//  init_hm3301_sensor();
 #endif
 
-  // Enter LPM0, interrupts enabled
-  __bis_SR_register(LPM0_bits | GIE);
+  // Enter LPM1, interrupts enabled
+  __bis_SR_register(LPM1_bits | GIE);
 }

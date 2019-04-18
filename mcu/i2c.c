@@ -9,7 +9,6 @@
 #include "uart.h"
 #include "gpio.h"
 #include "define.h"
-#include <stdio.h>
 #include <msp430fr5994.h>
 
 //***** Global Variables ******************************************************
@@ -26,7 +25,6 @@ void init_i2c() {
   UCB2I2CSA = HM3301_ADDRESS;               // Slave Address
   UCB2CTLW0 &= ~UCSWRST;                    // Clear SW reset, resume operation
   UCB2IE |= UCNACKIE;                       // Enable ACK interrupt
-//  UCB2IE |= UCTXIE | UCRXIE | UCNACKIE | UCBCNTIE | UCSTPIE;  // Enable interrupts
 }
 
 void init_hm3301_sensor() {
@@ -115,10 +113,11 @@ void __attribute__ ((interrupt(EUSCI_B2_VECTOR))) USCI_B2_ISR (void)
 
             //check buffer length
             if (rx_len == HM3301_DATA_LENGTH) {
-#ifdef DEBUG
               //validate sensor data
               int ret = validate_hm3301_data(rx_buffer, rx_len);
 
+#ifdef DEBUG
+              //check result
               if (ret == 0) {
                 set_green_led(ON);
               } else {
@@ -127,10 +126,11 @@ void __attribute__ ((interrupt(EUSCI_B2_VECTOR))) USCI_B2_ISR (void)
 
               back_channel_write(rx_buffer, rx_len);
 #endif
+
               UCB2CTLW0 |= UCTXSTP;                 // Send stop condition
 //              UCB2IE &= ~UCRXIE;                    // Disable RX interrupt
             }
-            __bic_SR_register_on_exit(LPM0_bits);   // Exit LPM0
+            __bic_SR_register_on_exit(LPM1_bits);   // Exit LPM1
             break;
         }
         case USCI_I2C_UCTXIFG0:             // Vector 24: TXIFG0
@@ -142,7 +142,7 @@ void __attribute__ ((interrupt(EUSCI_B2_VECTOR))) USCI_B2_ISR (void)
             UCB2CTLW0 |= UCTXSTP;           // Send stop condition
             UCB2IE &= ~UCTXIE;              // Disable TX interrupt
           }
-          __bic_SR_register_on_exit(LPM0_bits);   // Exit LPM0
+          __bic_SR_register_on_exit(LPM1_bits);   // Exit LPM1
           break;
         case USCI_I2C_UCBCNTIFG: break;     // Vector 26: BCNTIFG
         case USCI_I2C_UCCLTOIFG: break;     // Vector 28: clock low timeout
