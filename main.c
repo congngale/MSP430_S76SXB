@@ -21,6 +21,7 @@
 #include "i2c.h"
 #include "gpio.h"
 #include "uart.h"
+#include "lora.h"
 #include "timer.h"
 #include "clocks.h"
 #include <string.h>
@@ -48,7 +49,7 @@ void main(void) {
   init_i2c();
 
   //init timer
-  init_timer(10);
+  init_timer(30);       // Interval time is 30 seconds
 
   //need delay to make sensor available
   __delay_cycles(1000000);     // SW Delay
@@ -62,12 +63,6 @@ void main(void) {
 
   //write message
   back_channel_write(message, strlen(message));
-
-  //blink red led
-//  blink_red_led(2);
-
-  //blink green led
-//  blink_green_led(2);
 #endif
 
 #ifdef DEBUG
