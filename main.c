@@ -18,6 +18,7 @@
 //  July 2013
 //***************************************************************************************
 
+#include "i2c.h"
 #include "gpio.h"
 #include "uart.h"
 #include "clocks.h"
@@ -42,31 +43,30 @@ void main(void) {
   //init uart
   init_uart();
 
+  //init i2c
+  init_i2c();
+
 #ifdef DEBUG
   //init message
-  message = "Initialize back channel UART success!";
+  message = "Initialize UARTs success!";
 
   //write message
   back_channel_write(message, strlen(message));
 
   //blink red led
-  blink_red_led(2);
+//  blink_red_led(2);
 
   //blink green led
-  blink_green_led(2);
-
-  //set message
-  message = "Blink LED!";
-
-  //write message
-  back_channel_write(message, strlen(message));
+//  blink_green_led(2);
 #endif
 
-#ifdef S76SXB
-  message = "sip get_ver";
-  s76sxb_write(message, strlen(message));
+#ifdef DEBUG
+//  message = "sip get_ver";
+//  s76sxb_write(message, strlen(message));
+
+//  init_hm3301_sensor();
 #endif
 
   // Enter LPM0, interrupts enabled
-  __bis_SR_register(LPM1_bits | GIE);
+  __bis_SR_register(LPM0_bits | GIE);
 }

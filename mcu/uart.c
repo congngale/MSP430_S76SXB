@@ -6,25 +6,23 @@
  */
 
 
+#include "i2c.h"
 #include "uart.h"
-#include <msp430.h>
+#include "gpio.h"
+#include <msp430fr5994.h>
 
 //***** Global Variables ******************************************************
 #ifdef DEBUG
 static char bch_tx_buffer[MAX_BUFFER];
 static unsigned int bch_tx_data_len = 0;
-
 static char bch_queue_tx_buffer[MAX_BUFFER];
 static unsigned int bch_queue_tx_data_len = 0;
 #endif
 
-#ifdef S76SXB
-static char lora_rx_buffer[MAX_BUFFER];
-static unsigned int lora_rx_data_len = 0;
-
-static unsigned int lora_tx_data_len = 0;
 static char lora_tx_buffer[MAX_BUFFER];
-#endif
+static char lora_rx_buffer[MAX_BUFFER];
+static unsigned int lora_tx_data_len = 0;
+static unsigned int lora_rx_data_len = 0;
 
 // The baud rate values were calculated at:
 // http://software-dl.ti.com/msp430/msp430_public_sw/mcu/msp430/MSP430BaudRateConverter/index.html
@@ -47,7 +45,6 @@ void init_uart() {
   UCA0IE |= UCTXIE;             // Enable USCI_A0 TX interrupt
 #endif
 
-#ifdef S76SXB
   // Configure USCI_A3 for UART mode
   UCA3CTLW0 = UCSWRST;          // enable software reset
   UCA3CTLW0 |= UCSSEL__SMCLK;   // CLK = SMCLK
@@ -63,7 +60,6 @@ void init_uart() {
   UCA3CTLW0 &= ~UCSWRST;        // Initialize eUSCI, disable software reset
   UCA3IE |= UCRXIE;             // Enable USCI_A3 RX interrupt
   UCA3IE |= UCTXIE;             // Enable USCI_A3 TX interrupt
-#endif
 }
 
 #ifdef DEBUG
@@ -107,7 +103,6 @@ int back_channel_write(const char *buffer, unsigned int buffer_len) {
 }
 #endif
 
-#ifdef S76SXB
 int s76sxb_write(const char *buffer, unsigned int buffer_len) {
   //initialize
   volatile unsigned int i;
@@ -129,7 +124,6 @@ int s76sxb_write(const char *buffer, unsigned int buffer_len) {
 
   return 0;
 }
-#endif
 
 #ifdef DEBUG
 //*****************************************************************************
@@ -153,6 +147,16 @@ __interrupt void uart_0_isr(void)
             } else if (UCA0RXBUF == 'b') {
               //write to s76sxb
               s76sxb_write("mac tx ucnf 15 1234", 19);
+            } else if (UCA0RXBUF == 'c') {
+              //init sensor
+              init_hm3301_sensor();
+            } else if (UCA0RXBUF == 'd') {
+              //off led
+              set_red_led(OFF);
+              set_green_led(OFF);
+
+              //read sensor value
+              read_sensor_hm3301_value();
             }
 #endif
             __no_operation();
@@ -195,7 +199,6 @@ __interrupt void uart_0_isr(void)
 }
 #endif
 
-#ifdef S76SXB
 //*****************************************************************************
 // USCI_A3 Interrupt Service Routine
 //*****************************************************************************
@@ -217,10 +220,9 @@ __interrupt void uart_3_isr(void)
 
             //reset
             lora_rx_data_len = 0;
-#else
+#endif
             //notify data received
             __no_operation();
-#endif
           } else {
             //get buffer
             lora_rx_buffer[lora_rx_data_len] = UCA3RXBUF;
@@ -251,4 +253,3 @@ __interrupt void uart_3_isr(void)
           break;
   }
 }
-#endif

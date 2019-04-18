@@ -10,9 +10,14 @@
 
 #include "define.h"
 
+#define ON  1   // LED mode on
+#define OFF 0   // LED mode off
+
 void init_gpio(void);
 
 #ifdef DEBUG
+void set_red_led(int mode);
+void set_green_led(int mode);
 void blink_red_led(unsigned int count);
 void blink_green_led(unsigned int count);
 #endif

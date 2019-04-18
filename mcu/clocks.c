@@ -6,7 +6,7 @@
  */
 
 #include "clocks.h"
-#include <msp430.h>
+#include <msp430fr5994.h>
 
 void init_clocks() {
   // Startup clock system with max DCO setting ~8MHz

@@ -6,7 +6,7 @@
  */
 
 #include "gpio.h"
-#include <msp430.h>
+#include <msp430fr5994.h>
 
 //***** Global Variables ******************************************************
 //static unsigned int red_time = 0;
@@ -30,11 +30,13 @@ void init_gpio() {
   P2SEL0 &= ~(BIT0 | BIT1);
 #endif
 
-#ifdef S76SXB
+  // I2C pins
+  P7SEL0 |= BIT0 | BIT1;
+  P7SEL1 &= ~(BIT0 | BIT1);
+
   // Set P6.0 and P6.1 for USCI_A3 UART operation
   P6SEL0 |= BIT0 | BIT1;
   P6SEL1 &= ~(BIT0 | BIT1);
-#endif
 
   // Disable the GPIO power-on default high-impedance mode to activate
   // previously configured port settings
@@ -42,9 +44,32 @@ void init_gpio() {
 }
 
 #ifdef DEBUG
-//*****************************************************************************
-// Blink RED Led
-//*****************************************************************************
+void set_red_led(int mode) {
+  //check mode
+  switch(mode) {
+    case ON:
+      P1OUT |= BIT0;     // LED Red switched on
+      break;
+
+    case OFF:
+      P1OUT &= ~BIT0;    // LED Red switched off
+      break;
+  }
+}
+
+void set_green_led(int mode) {
+  //check mode
+  switch(mode) {
+    case ON:
+      P1OUT |= BIT1;     // LED Green switched on
+      break;
+
+    case OFF:
+      P1OUT &= ~BIT1;    // LED Green switched off
+      break;
+  }
+}
+
 void blink_red_led(unsigned int count) {
   //init
   volatile unsigned int i;

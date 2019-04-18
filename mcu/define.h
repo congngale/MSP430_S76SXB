@@ -8,7 +8,14 @@
 #ifndef MCU_DEFINE_H_
 #define MCU_DEFINE_H_
 
-#define DEBUG   //define print debug
-#define S76SXB  //define connect to S76SXB LoRa board
+//***** Variable Defines ***********************************
+#define ASCII_ENTER       0x0D
+#define ASCII_LINEFEED    0x0A
+
+#define MAX_BUFFER        512
+
+//***** Build Defines **************************************
+
+#define DEBUG   //define debug
 
 #endif /* MCU_DEFINE_H_ */
