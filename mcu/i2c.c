@@ -8,6 +8,7 @@
 #include "i2c.h"
 #include "uart.h"
 #include "gpio.h"
+#include "lora.h"
 #include "define.h"
 #include <msp430fr5994.h>
 
@@ -115,6 +116,11 @@ void __attribute__ ((interrupt(EUSCI_B2_VECTOR))) USCI_B2_ISR (void)
             if (rx_len == HM3301_DATA_LENGTH) {
               //validate sensor data
               int ret = validate_hm3301_data(rx_buffer, rx_len);
+
+              //check result
+              if (ret == 0) {
+                  send_data(rx_buffer, rx_len);
+              }
 
 #ifdef DEBUG
               //check result

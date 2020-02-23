@@ -8,6 +8,6 @@
 #ifndef MCU_TIMER_H_
 #define MCU_TIMER_H_
 
-void init_timmer(unsigned int second);
+void init_sleep_interval(unsigned int second);
 
 #endif /* MCU_TIMER_H_ */

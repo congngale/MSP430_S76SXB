@@ -14,6 +14,8 @@
 
 #define MAX_BUFFER        512
 
+//#define SLEEP_CMD "sip sleep 28 uart_off"
+
 //***** Build Defines **************************************
 
 #define DEBUG   //define debug

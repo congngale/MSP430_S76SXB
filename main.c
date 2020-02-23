@@ -48,11 +48,11 @@ void main(void) {
   //init i2c
   init_i2c();
 
-  //init timer
-  init_timer(30);       // Interval time is 30 seconds
+  //init sleep interval
+  init_sleep_interval(30);       // Interval sleep is 30 seconds
 
   //need delay to make sensor available
-  __delay_cycles(1000000);     // SW Delay
+  __delay_cycles(1000000);      // SW Delay
 
   //init hm3301 sensor
   init_hm3301_sensor();
@@ -63,13 +63,11 @@ void main(void) {
 
   //write message
   back_channel_write(message, strlen(message));
-#endif
 
-#ifdef DEBUG
-//  message = "sip get_ver";
-//  s76sxb_write(message, strlen(message));
+  message = "sip get_ver";
+  s76sxb_write(message, strlen(message));
 #endif
 
   // Enter LPM1, interrupts enabled
-  __bis_SR_register(LPM1_bits | GIE);
+  __bis_SR_register(LPM3_bits | GIE);
 }

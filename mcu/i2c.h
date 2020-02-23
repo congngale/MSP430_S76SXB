@@ -12,9 +12,6 @@
 #define HM3301_DATA_LENGTH 29
 #define HM3301_SELECT_COMM_CMD 0x88
 
-#define I2C_READ  1
-#define I2C_WRITE 2
-
 void init_i2c(void);
 
 void init_hm3301_sensor(void);

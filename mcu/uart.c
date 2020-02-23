@@ -20,9 +20,13 @@ static unsigned int bch_queue_tx_data_len = 0;
 #endif
 
 static char lora_tx_buffer[MAX_BUFFER];
-static char lora_rx_buffer[MAX_BUFFER];
 static unsigned int lora_tx_data_len = 0;
+
+
+#ifdef DEBUG
+static char lora_rx_buffer[MAX_BUFFER];
 static unsigned int lora_rx_data_len = 0;
+#endif
 
 // The baud rate values were calculated at:
 // http://software-dl.ti.com/msp430/msp430_public_sw/mcu/msp430/MSP430BaudRateConverter/index.html
@@ -212,15 +216,14 @@ __interrupt void uart_3_isr(void)
 
       // UART receive interrupt
       case USCI_UART_UCRXIFG:
+#ifdef DEBUG
           //check data
           if (UCA3RXBUF == ASCII_LINEFEED) {
-#ifdef DEBUG
             //write back channel
             back_channel_write(lora_rx_buffer, lora_rx_data_len);
 
             //reset
             lora_rx_data_len = 0;
-#endif
             //notify data received
             __no_operation();
           } else {
@@ -230,6 +233,7 @@ __interrupt void uart_3_isr(void)
             //append 1 data
             lora_rx_data_len++;
           }
+#endif
           break;
 
       // UART transmit interrupt
@@ -241,6 +245,8 @@ __interrupt void uart_3_isr(void)
 
             //send next data
             UCA3TXBUF = lora_tx_buffer[lora_tx_data_len];
+          } else {
+            __bic_SR_register_on_exit(LPM3_bits);   // Exit LPM1
           }
           break;
 
